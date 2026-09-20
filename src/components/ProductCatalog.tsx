@@ -109,7 +109,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
     <div className="space-y-4">
       {/* Top Controls Bar */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row gap-3 items-center justify-between">
-        {/* Search Field */}
+          {/* Search Field */}
         <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -117,7 +117,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             placeholder="Search by Name, SKU, Barcode, Brand..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"
           />
         </div>
 
@@ -127,7 +127,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700"
+            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
           >
             {categories.map((c) => (
               <option key={c} value={c}>
@@ -175,7 +175,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           {(userRole === 'ADMIN' || userRole === 'MANAGER') && (
             <button
               onClick={onAddNewProduct}
-              className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition"
+              className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition active:scale-95"
             >
               <Plus className="w-4 h-4" />
               Add Product
@@ -305,7 +305,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                         <div className="text-xs font-bold text-slate-800">
                           {totalNetworkStock} total
                         </div>
-                        <div className="text-[10px] text-slate-400">across 4 locations</div>
+                        <div className="text-[10px] text-slate-400">across {stores.length} locations</div>
                       </td>
 
                       {/* Label Actions */}
@@ -329,7 +329,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                                 onAddToBatch(product, getBatchQty(product.id));
                                 audioService.playScanBeep();
                               }}
-                              className="p-1 hover:bg-white rounded text-slate-700 hover:text-blue-600 transition"
+                              className="p-1 hover:bg-white rounded text-slate-700 hover:text-emerald-600 transition"
                               title="Add to Batch Print Queue"
                             >
                               <Layers className="w-3.5 h-3.5" />
@@ -339,7 +339,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                           {/* Quick 1-Click Print */}
                           <button
                             onClick={() => onQuickPrint(product)}
-                            className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs transition"
+                            className="flex items-center gap-1 px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs transition active:scale-95"
                             title="Instant Single Print"
                           >
                             <Printer className="w-3.5 h-3.5" />

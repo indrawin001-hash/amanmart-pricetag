@@ -14,6 +14,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { StoreLocation, User, ThermalPrinterSettings, LabelTemplateConfig } from '../types';
+import { AmanmartLogo } from './AmanmartLogo';
 
 interface NavbarProps {
   stores: StoreLocation[];
@@ -55,38 +56,29 @@ export const Navbar: React.FC<NavbarProps> = ({
   printerSettings,
 }) => {
   return (
-    <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-md">
+    <header className="bg-[#0b3520] text-white border-b border-emerald-800/40 sticky top-0 z-40 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-        {/* Brand & Title */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-            <BarcodeIcon className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base font-black tracking-tight text-white leading-none">
-                Aman LabelPrint
-              </h1>
-              <span className="hidden sm:inline-block bg-blue-500/20 text-blue-400 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-blue-500/30 uppercase tracking-wide">
-                Thermal POS &amp; Sync
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400 mt-0.5 hidden md:block">
-              Multi-store barcode pricing stickers &amp; inventory
-            </p>
+        {/* Brand & Title with Official Amanmart Logo */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <AmanmartLogo size="sm" theme="dark" showTagline={true} className="cursor-pointer hover:opacity-95 transition" />
+          
+          <div className="hidden xl:flex items-center gap-2 pl-3 border-l border-emerald-800/60">
+            <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-emerald-500/30 uppercase tracking-wide">
+              Shelf Label POS &amp; Sync
+            </span>
           </div>
         </div>
 
         {/* Store Location Selector */}
-        <div className="hidden lg:flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60">
-          <Building2 className="w-4 h-4 text-slate-400" />
+        <div className="hidden lg:flex items-center gap-2 bg-emerald-950/70 px-3 py-1.5 rounded-xl border border-emerald-800/60 shadow-inner">
+          <Building2 className="w-4 h-4 text-emerald-400" />
           <select
             value={activeStore.id}
             onChange={(e) => onSelectStore(e.target.value)}
-            className="bg-transparent text-xs font-bold text-slate-200 focus:outline-none cursor-pointer"
+            className="bg-transparent text-xs font-bold text-emerald-100 focus:outline-none cursor-pointer"
           >
             {stores.map((s) => (
-              <option key={s.id} value={s.id} className="bg-slate-900 text-white">
+              <option key={s.id} value={s.id} className="bg-[#0b3520] text-white">
                 {s.name} ({s.code})
               </option>
             ))}
@@ -100,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={onToggleOffline}
             className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold transition border ${
               isOnline
-                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+                ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25'
                 : 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30'
             }`}
             title={
@@ -111,7 +103,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             {isOnline ? (
               <>
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-[#62cb32] animate-pulse" />
                 <span className="hidden sm:inline">Online Sync</span>
               </>
             ) : (
@@ -125,7 +117,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Barcode Scanner Button */}
           <button
             onClick={onOpenScanner}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-xs transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-xs transition active:scale-95"
             title="Open Camera / Hardware Scanner"
           >
             <BarcodeIcon className="w-4 h-4" />
@@ -135,7 +127,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Batch Print Queue Button */}
           <button
             onClick={onOpenBatchPrint}
-            className="relative p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700/60"
+            className="relative p-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-200 transition border border-emerald-800/60"
             title="Open Bulk Batch Print Queue"
           >
             <Layers className="w-4 h-4" />
@@ -149,7 +141,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Thermal Printer Settings */}
           <button
             onClick={onOpenPrinterSettings}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700/60"
+            className="p-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-200 transition border border-emerald-800/60"
             title="Configure Thermal Printer (Bluetooth/Serial/TSPL)"
           >
             <Printer className="w-4 h-4" />
@@ -158,7 +150,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Template Designer */}
           <button
             onClick={onOpenTemplateEditor}
-            className="hidden md:flex p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700/60"
+            className="hidden md:flex p-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-200 transition border border-emerald-800/60"
             title="Custom Template Studio"
           >
             <LayoutTemplate className="w-4 h-4" />
@@ -167,7 +159,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Notification Center */}
           <button
             onClick={onOpenNotifications}
-            className="relative p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700/60"
+            className="relative p-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-200 transition border border-emerald-800/60"
             title="Low-Stock Alerts & Notifications"
           >
             <Bell className="w-4 h-4" />
@@ -181,7 +173,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Cloud Deploy Guide */}
           <button
             onClick={onOpenDeployGuide}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700/60"
+            className="p-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-200 transition border border-emerald-800/60"
             title="Cloud Deployment (AWS, Vercel, PWA)"
           >
             <Cloud className="w-4 h-4" />
@@ -190,17 +182,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* User Profile / RBAC Switcher */}
           <button
             onClick={onOpenAuth}
-            className="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-left transition"
+            className="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-xl bg-emerald-950/70 hover:bg-emerald-900/80 border border-emerald-800/60 text-left transition"
             title="Switch User Role & Permissions"
           >
-            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-emerald-700 text-white font-bold text-xs flex items-center justify-center">
               {currentUser.name.charAt(0)}
             </div>
             <div className="hidden xl:block">
-              <div className="text-[11px] font-bold text-slate-200 leading-tight">
+              <div className="text-[11px] font-bold text-emerald-100 leading-tight">
                 {currentUser.name}
               </div>
-              <div className="text-[9px] text-slate-400 font-mono">
+              <div className="text-[9px] text-emerald-300 font-mono">
                 {currentUser.role}
               </div>
             </div>

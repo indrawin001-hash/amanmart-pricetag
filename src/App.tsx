@@ -13,7 +13,8 @@ import {
   Plus,
   RotateCcw,
   Sliders,
-  ExternalLink
+  ExternalLink,
+  Upload
 } from 'lucide-react';
 import { 
   Product, 
@@ -42,6 +43,7 @@ import { DeployGuideModal } from './components/DeployGuideModal';
 import { ProductFormModal } from './components/ProductFormModal';
 import { StockAdjustModal } from './components/StockAdjustModal';
 import { ProductImportModal } from './components/ProductImportModal';
+import { AmanmartLogo, AmanmartBannerCard } from './components/AmanmartLogo';
 
 export default function App() {
   // Core application states
@@ -215,7 +217,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-[#f4f7f4] text-slate-900 flex flex-col font-sans selection:bg-emerald-600 selection:text-white">
       {/* Top Navbar */}
       <Navbar
         stores={stores}
@@ -262,84 +264,70 @@ export default function App() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
-        {/* Attached Example Showcase Card (Direct Visual Feedback) */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 overflow-hidden relative">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="bg-red-500/10 text-red-600 text-xs font-black px-2.5 py-0.5 rounded-full border border-red-500/20 uppercase tracking-wide">
-                  Attached Reference Tag Example
-                </span>
-                <span className="text-xs text-slate-400 font-mono">
-                  Indonesian Supermarket Dual-Tier Shelf Sticker
-                </span>
+        {/* Amanmart Official Brand Header Box */}
+        <div 
+          className="rounded-2xl text-white shadow-xs overflow-hidden relative px-5 py-4 sm:px-6 sm:py-4.5 border border-emerald-800/40"
+          style={{
+            background: 'linear-gradient(135deg, #092c1a 0%, #0d3b23 55%, #124d2e 100%)',
+          }}
+        >
+          {/* Subtle background ambient glow */}
+          <div className="absolute -right-12 -top-12 w-56 h-56 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+          
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
+            {/* Logo positioned proportionally with store context */}
+            <div className="flex flex-col sm:flex-row items-center gap-3.5 sm:gap-4 text-center sm:text-left">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-black/25 backdrop-blur-xs border border-emerald-700/50 shadow-inner flex-shrink-0">
+                <AmanmartLogo size="md" theme="dark" showTagline={true} />
               </div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 mt-1">
-                Precision Thermal Print &amp; Barcode Integration
-              </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Exact replica of attached image: Dual-tier unit/carton price in bold red,
-                EAN-13 barcode, SKU code &amp; effective date.
-              </p>
+
+              <div>
+                <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
+                  <span className="bg-emerald-500/25 text-emerald-300 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-500/35 uppercase tracking-wide">
+                    Branch {activeStore.code} • {activeStore.name}
+                  </span>
+                  <span className="text-xs text-emerald-200/70 font-mono">
+                    {stores.length} Connected Branches
+                  </span>
+                </div>
+                <h2 className="text-sm sm:text-base font-bold text-white mt-1">
+                  Thermal Price Label Printing &amp; Multi-Branch Inventory
+                </h2>
+                <p className="text-xs text-emerald-200/80 mt-0.5 max-w-xl">
+                  ESC/POS &amp; TSPL thermal printing, real-time stock sync, and barcode scanner integration.
+                </p>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                onClick={handlePrintAttachedPair}
-                className="flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-sm transition"
-              >
-                <Printer className="w-4 h-4" />
-                Print This Pair (Like Example)
-              </button>
-
+            {/* Header Action Buttons */}
+            <div className="flex items-center gap-2.5 z-10 flex-wrap justify-center flex-shrink-0">
               <button
                 onClick={() => setScannerOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition"
+                className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-950/80 hover:bg-emerald-900 text-emerald-100 border border-emerald-700/60 rounded-xl text-xs font-semibold transition active:scale-95"
               >
-                <BarcodeIcon className="w-4 h-4 text-blue-600" />
-                Test Scan Barcode
+                <BarcodeIcon className="w-4 h-4 text-[#62cb32]" />
+                Scan Barcode
               </button>
-            </div>
-          </div>
 
-          {/* Side-by-side sticker showcase matching attached image.png */}
-          <div className="mt-5 p-4 sm:p-6 bg-slate-50/75 rounded-xl border border-slate-200/80 flex flex-wrap gap-4 sm:gap-6 justify-center items-center">
-            {/* Tag 1: Indomie Ayam Bawang 69g */}
-            <div className="flex flex-col items-center">
-              <LabelPreview
-                product={attachedExample1}
-                template={templates.find((t) => t.id === 'tmpl-supermarket') || templates[0]}
-                store={activeStore}
-                scale={1.15}
-              />
-              <span className="text-[10px] text-slate-400 font-mono mt-1">
-                SKU: {attachedExample1.sku} | Barcode: {attachedExample1.barcode}
-              </span>
-            </div>
-
-            {/* Tag 2: Indomie Ayam Spesial 75g */}
-            <div className="flex flex-col items-center">
-              <LabelPreview
-                product={attachedExample2}
-                template={templates.find((t) => t.id === 'tmpl-supermarket') || templates[0]}
-                store={activeStore}
-                scale={1.15}
-              />
-              <span className="text-[10px] text-slate-400 font-mono mt-1">
-                SKU: {attachedExample2.sku} | Barcode: {attachedExample2.barcode}
-              </span>
+              <button
+                onClick={() => setProductImportOpen(true)}
+                className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-md shadow-black/20 transition active:scale-95 border border-emerald-400/30"
+              >
+                <Upload className="w-4 h-4" />
+                Import Items
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Primary View Navigation Tabs */}
-        <div className="flex border-b border-slate-200 bg-white px-4 rounded-t-2xl shadow-xs gap-3 pt-2">
+        {/* Primary View Navigation Tabs in Soft Green Theme */}
+        <div className="flex border-b border-emerald-200/80 bg-white px-4 rounded-t-2xl shadow-xs gap-3 pt-2">
           <button
             onClick={() => setActiveTab('catalog')}
             className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-bold border-b-2 transition ${
               activeTab === 'catalog'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-emerald-700 text-emerald-800 bg-emerald-50/50'
+                : 'border-transparent text-slate-500 hover:text-emerald-800'
             }`}
           >
             <BarcodeIcon className="w-4 h-4" />
@@ -350,8 +338,8 @@ export default function App() {
             onClick={() => setActiveTab('sync_matrix')}
             className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-bold border-b-2 transition ${
               activeTab === 'sync_matrix'
-                ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-emerald-700 text-emerald-800 bg-emerald-50/50'
+                : 'border-transparent text-slate-500 hover:text-emerald-800'
             }`}
           >
             <Building2 className="w-4 h-4" />
@@ -362,8 +350,8 @@ export default function App() {
             onClick={() => setActiveTab('analytics')}
             className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-bold border-b-2 transition ${
               activeTab === 'analytics'
-                ? 'border-emerald-600 text-emerald-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-emerald-700 text-emerald-800 bg-emerald-50/50'
+                : 'border-transparent text-slate-500 hover:text-emerald-800'
             }`}
           >
             <BarChart3 className="w-4 h-4" />
@@ -422,32 +410,32 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 mt-12 py-6 text-xs text-slate-500">
+      <footer className="bg-white border-t border-emerald-200/80 mt-12 py-6 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-800">Aman LabelPrint &amp; Inventory</span>
+            <span className="font-bold text-slate-800">Amanmart Shelf Label &amp; Multi-Branch Inventory</span>
+            <span>•</span>
+            <span className="text-emerald-700 font-semibold">Halal Terjangkau</span>
             <span>•</span>
             <span>Thermal ESC/POS &amp; TSPL Ready</span>
-            <span>•</span>
-            <span>PWA Offline Certified</span>
           </div>
 
           <div className="flex items-center gap-4 text-slate-600">
             <button
               onClick={() => setDeployGuideOpen(true)}
-              className="hover:text-blue-600 font-semibold flex items-center gap-1"
+              className="hover:text-emerald-700 font-semibold flex items-center gap-1"
             >
-              AWS &amp; Vercel Deployment
+              Cloud Deployment
             </button>
             <button
               onClick={() => setPrinterSettingsOpen(true)}
-              className="hover:text-blue-600 font-semibold"
+              className="hover:text-emerald-700 font-semibold"
             >
               Printer Settings
             </button>
             <button
               onClick={() => setTemplateEditorOpen(true)}
-              className="hover:text-blue-600 font-semibold"
+              className="hover:text-emerald-700 font-semibold"
             >
               Template Studio
             </button>
