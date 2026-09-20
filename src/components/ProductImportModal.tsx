@@ -24,6 +24,64 @@ interface ProductImportModalProps {
   onImportComplete: (importedProducts: ImportProductRecord[], targetStoreId: string, updateExisting: boolean) => void;
 }
 
+// Function to parse numeric price string with currency and separators
+const parsePrice = (val: string): number => {
+  if (!val) return 0;
+  // Remove "Rp", "IDR", currency symbols, spaces
+  let clean = val.replace(/[rR][pP]\.?|[iI][dD][rR]\.?|\$|€|\s+/g, '');
+  
+  // Check Indonesian / European decimal format e.g. "3.100,00" or "3.100" vs "3100.50"
+  if (clean.includes('.') && clean.includes(',')) {
+    clean = clean.replace(/\./g, '').replace(',', '.');
+  } else if (clean.includes('.') && clean.indexOf('.') !== clean.lastIndexOf('.')) {
+    // Multiple thousand dots e.g. 1.250.000
+    clean = clean.replace(/\./g, '');
+  } else if (clean.includes(',') && clean.indexOf(',') !== clean.lastIndexOf(',')) {
+    clean = clean.replace(/,/g, '');
+  } else if (clean.includes('.')) {
+    // Check if it's thousands separator (e.g. 2.900) or decimal (e.g. 2.9)
+    const parts = clean.split('.');
+    if (parts[1] && parts[1].length === 3) {
+      clean = clean.replace(/\./g, '');
+    }
+  } else if (clean.includes(',')) {
+    const parts = clean.split(',');
+    if (parts[1] && parts[1].length === 3) {
+      clean = clean.replace(/,/g, '');
+    } else {
+      clean = clean.replace(',', '.');
+    }
+  }
+
+  const num = parseFloat(clean);
+  return isNaN(num) ? 0 : Math.round(num);
+};
+
+// Helper to split CSV line safely handling quotes
+const parseCsvLine = (line: string): string[] => {
+  const result: string[] = [];
+  let cur = '';
+  let inQuotes = false;
+  // Determine primary delimiter: tab (\t), semicolon (;), or comma (,)
+  let delim = ',';
+  if (line.includes('\t')) delim = '\t';
+  else if (line.includes(';') && !line.includes(',')) delim = ';';
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === delim && !inQuotes) {
+      result.push(cur.trim().replace(/^"|"$/g, ''));
+      cur = '';
+    } else {
+      cur += char;
+    }
+  }
+  result.push(cur.trim().replace(/^"|"$/g, ''));
+  return result;
+};
+
 export const ProductImportModal: React.FC<ProductImportModalProps> = ({
   isOpen,
   onClose,
@@ -42,66 +100,6 @@ export const ProductImportModal: React.FC<ProductImportModalProps> = ({
   const [importResult, setImportResult] = useState<{ added: number; updated: number } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  if (!isOpen) return null;
-
-  // Function to parse numeric price string with currency and separators
-  const parsePrice = (val: string): number => {
-    if (!val) return 0;
-    // Remove "Rp", "IDR", currency symbols, spaces
-    let clean = val.replace(/[rR][pP]\.?|[iI][dD][rR]\.?|\$|€|\s+/g, '');
-    
-    // Check Indonesian / European decimal format e.g. "3.100,00" or "3.100" vs "3100.50"
-    if (clean.includes('.') && clean.includes(',')) {
-      clean = clean.replace(/\./g, '').replace(',', '.');
-    } else if (clean.includes('.') && clean.indexOf('.') !== clean.lastIndexOf('.')) {
-      // Multiple thousand dots e.g. 1.250.000
-      clean = clean.replace(/\./g, '');
-    } else if (clean.includes(',') && clean.indexOf(',') !== clean.lastIndexOf(',')) {
-      clean = clean.replace(/,/g, '');
-    } else if (clean.includes('.')) {
-      // Check if it's thousands separator (e.g. 2.900) or decimal (e.g. 2.9)
-      const parts = clean.split('.');
-      if (parts[1] && parts[1].length === 3) {
-        clean = clean.replace(/\./g, '');
-      }
-    } else if (clean.includes(',')) {
-      const parts = clean.split(',');
-      if (parts[1] && parts[1].length === 3) {
-        clean = clean.replace(/,/g, '');
-      } else {
-        clean = clean.replace(',', '.');
-      }
-    }
-
-    const num = parseFloat(clean);
-    return isNaN(num) ? 0 : Math.round(num);
-  };
-
-  // Helper to split CSV line safely handling quotes
-  const parseCsvLine = (line: string): string[] => {
-    const result: string[] = [];
-    let cur = '';
-    let inQuotes = false;
-    // Determine primary delimiter: tab (\t), semicolon (;), or comma (,)
-    let delim = ',';
-    if (line.includes('\t')) delim = '\t';
-    else if (line.includes(';') && !line.includes(',')) delim = ';';
-
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i];
-      if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === delim && !inQuotes) {
-        result.push(cur.trim().replace(/^"|"$/g, ''));
-        cur = '';
-      } else {
-        cur += char;
-      }
-    }
-    result.push(cur.trim().replace(/^"|"$/g, ''));
-    return result;
-  };
 
   // Parse raw text into structured records
   const parsedRecords = useMemo((): ImportProductRecord[] => {
@@ -286,6 +284,8 @@ export const ProductImportModal: React.FC<ProductImportModalProps> = ({
       audioService.playErrorTone();
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">

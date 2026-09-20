@@ -557,16 +557,18 @@ export default function App() {
         }}
       />
 
-      <ProductImportModal
-        isOpen={productImportOpen}
-        onClose={() => setProductImportOpen(false)}
-        stores={stores}
-        activeStoreId={activeStore.id}
-        existingProducts={products}
-        onImportComplete={(imported, targetStoreId, updateExisting) => {
-          storageService.importProducts(imported, targetStoreId, updateExisting);
-        }}
-      />
+      {productImportOpen && (
+        <ProductImportModal
+          isOpen={productImportOpen}
+          onClose={() => setProductImportOpen(false)}
+          stores={stores}
+          activeStoreId={activeStore.id}
+          existingProducts={products}
+          onImportComplete={(imported, targetStoreId, updateExisting) => {
+            storageService.importProducts(imported, targetStoreId, updateExisting);
+          }}
+        />
+      )}
     </div>
   );
 }
