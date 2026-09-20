@@ -32,6 +32,7 @@ interface ProductCatalogProps {
   onEditProduct: (product: Product) => void;
   onAddNewProduct: () => void;
   onDeleteProduct: (productId: string) => void;
+  onOpenImport?: () => void;
   userRole: UserRole;
   templates: LabelTemplateConfig[];
 }
@@ -46,6 +47,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   onEditProduct,
   onAddNewProduct,
   onDeleteProduct,
+  onOpenImport,
   userRole,
   templates,
 }) => {
@@ -156,6 +158,18 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             <Download className="w-3.5 h-3.5" />
             Export
           </button>
+
+          {/* Import CSV / Items */}
+          {(userRole === 'ADMIN' || userRole === 'MANAGER') && onOpenImport && (
+            <button
+              onClick={onOpenImport}
+              className="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 rounded-xl text-xs font-bold transition shadow-xs"
+              title="Import Item, Barcode, Price from CSV or Spreadsheet"
+            >
+              <Upload className="w-3.5 h-3.5 text-emerald-600" />
+              Import
+            </button>
+          )}
 
           {/* Add Product Button (Admin or Manager) */}
           {(userRole === 'ADMIN' || userRole === 'MANAGER') && (

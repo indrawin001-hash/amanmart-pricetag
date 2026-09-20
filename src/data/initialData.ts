@@ -1,36 +1,97 @@
-import { Product, StoreLocation, LabelTemplateConfig, User } from '../types';
+import { Product, ProductStock, StoreLocation, LabelTemplateConfig, User } from '../types';
 
 export const INITIAL_STORES: StoreLocation[] = [
   {
-    id: 'store-1',
-    code: 'JKT-01',
-    name: 'Jakarta Central Superstore',
-    city: 'Jakarta',
-    address: 'Jl. Sudirman No. 45, Jakarta Pusat',
+    id: 'store-krg',
+    code: 'KRG',
+    name: 'KRANGGAN',
+    city: 'Bekasi',
+    address: 'Jl. Raya Kranggan No. 1, Kranggan',
     isPrimary: true,
   },
   {
-    id: 'store-2',
-    code: 'SBY-02',
-    name: 'Surabaya Commercial Hub',
-    city: 'Surabaya',
-    address: 'Jl. Pemuda No. 18, Surabaya',
+    id: 'store-xml',
+    code: 'XML',
+    name: 'KALIMALANG',
+    city: 'Jakarta Timur',
+    address: 'Jl. Raya Kalimalang No. 12, Kalimalang',
   },
   {
-    id: 'store-3',
-    code: 'BDG-03',
-    name: 'Bandung Express Mart',
-    city: 'Bandung',
-    address: 'Jl. Asia Afrika No. 88, Bandung',
+    id: 'store-klp',
+    code: 'KLP',
+    name: 'PDK KELAPA',
+    city: 'Jakarta Timur',
+    address: 'Jl. Raya Pondok Kelapa No. 8',
   },
   {
-    id: 'store-4',
-    code: 'DPS-04',
-    name: 'Bali Logistics & Distribution Depot',
-    city: 'Denpasar',
-    address: 'Jl. Bypass Ngurah Rai No. 102, Bali',
+    id: 'store-plt',
+    code: 'PLT',
+    name: 'PLUIT',
+    city: 'Jakarta Utara',
+    address: 'Jl. Pluit Selatan Raya No. 15, Pluit',
+  },
+  {
+    id: 'store-mkr',
+    code: 'MKR',
+    name: 'MEKAR JAYA',
+    city: 'Depok',
+    address: 'Jl. Mekar Jaya Raya No. 22',
+  },
+  {
+    id: 'store-cpm',
+    code: 'CPM',
+    name: 'CIPAMART',
+    city: 'Jakarta Selatan',
+    address: 'Jl. Cipamart Utama No. 5',
+  },
+  {
+    id: 'store-snm',
+    code: 'SNM',
+    name: 'SINIMART',
+    city: 'Jakarta Barat',
+    address: 'Jl. Sinimart Raya No. 18',
+  },
+  {
+    id: 'store-iqm',
+    code: 'IQM',
+    name: 'IQROMART',
+    city: 'Jakarta Timur',
+    address: 'Jl. Iqromart Mandiri No. 9',
   },
 ];
+
+// Helper to generate consistent stock distribution across all 8 branches
+const createBranchStocks = (
+  baseQty: number,
+  minThresh: number = 20,
+  overrides?: Record<string, { quantity?: number; minThreshold?: number }>
+): Record<string, ProductStock> => {
+  const multipliers: Record<string, number> = {
+    'store-krg': 1.0, // KRANGGAN (Main)
+    'store-xml': 0.85, // KALIMALANG
+    'store-klp': 0.7, // PDK KELAPA
+    'store-plt': 1.1, // PLUIT
+    'store-mkr': 0.55, // MEKAR JAYA
+    'store-cpm': 0.65, // CIPAMART
+    'store-snm': 0.75, // SINIMART
+    'store-iqm': 0.45, // IQROMART
+  };
+
+  const stocks: Record<string, ProductStock> = {};
+  INITIAL_STORES.forEach((store) => {
+    const mult = multipliers[store.id] ?? 0.7;
+    const calcQty = Math.max(0, Math.round(baseQty * mult));
+    const override = overrides?.[store.id];
+
+    stocks[store.id] = {
+      storeId: store.id,
+      quantity: override?.quantity !== undefined ? override.quantity : calcQty,
+      minThreshold: override?.minThreshold !== undefined ? override.minThreshold : minThresh,
+      lastUpdated: '2026-09-20T07:15:00Z',
+    };
+  });
+  return stocks;
+};
 
 export const INITIAL_PRODUCTS: Product[] = [
   {
@@ -51,13 +112,11 @@ export const INITIAL_PRODUCTS: Product[] = [
       bulkQuantity: 40,
       bulkPrice: 113500,
     },
-    stocks: {
-      'store-1': { storeId: 'store-1', quantity: 145, minThreshold: 30, lastUpdated: '2026-09-13T07:15:00Z' },
-      'store-2': { storeId: 'store-2', quantity: 18, minThreshold: 25, lastUpdated: '2026-09-13T06:30:00Z' }, // Low stock!
-      'store-3': { storeId: 'store-3', quantity: 84, minThreshold: 20, lastUpdated: '2026-09-12T18:00:00Z' },
-      'store-4': { storeId: 'store-4', quantity: 420, minThreshold: 100, lastUpdated: '2026-09-13T08:00:00Z' },
-    },
-    dateEffective: '13/09/2026',
+    stocks: createBranchStocks(140, 30, {
+      'store-xml': { quantity: 18, minThreshold: 25 }, // Low stock in Kalimalang!
+      'store-iqm': { quantity: 8, minThreshold: 15 }, // Low stock in Iqromart!
+    }),
+    dateEffective: '20/09/2026',
     supplier: 'PT Indofood CBP Sukses Makmur',
     locationBin: 'A-04-02',
   },
@@ -79,13 +138,11 @@ export const INITIAL_PRODUCTS: Product[] = [
       bulkQuantity: 40,
       bulkPrice: 113500,
     },
-    stocks: {
-      'store-1': { storeId: 'store-1', quantity: 95, minThreshold: 30, lastUpdated: '2026-09-13T07:15:00Z' },
-      'store-2': { storeId: 'store-2', quantity: 60, minThreshold: 25, lastUpdated: '2026-09-13T06:30:00Z' },
-      'store-3': { storeId: 'store-3', quantity: 12, minThreshold: 20, lastUpdated: '2026-09-13T07:45:00Z' }, // Low stock!
-      'store-4': { storeId: 'store-4', quantity: 380, minThreshold: 100, lastUpdated: '2026-09-13T08:00:00Z' },
-    },
-    dateEffective: '13/09/2026',
+    stocks: createBranchStocks(110, 25, {
+      'store-klp': { quantity: 12, minThreshold: 20 }, // Low stock in Pdk Kelapa!
+      'store-mkr': { quantity: 9, minThreshold: 15 }, // Low stock in Mekar Jaya!
+    }),
+    dateEffective: '20/09/2026',
     supplier: 'PT Indofood CBP Sukses Makmur',
     locationBin: 'A-04-03',
   },
@@ -112,15 +169,12 @@ export const INITIAL_PRODUCTS: Product[] = [
       originalPrice: 3500,
       discountPercent: 11,
       promoLabel: 'WEEKEND SPECIAL',
-      validUntil: '15/09/2026',
+      validUntil: '22/09/2026',
     },
-    stocks: {
-      'store-1': { storeId: 'store-1', quantity: 310, minThreshold: 50, lastUpdated: '2026-09-13T07:15:00Z' },
-      'store-2': { storeId: 'store-2', quantity: 140, minThreshold: 35, lastUpdated: '2026-09-13T06:30:00Z' },
-      'store-3': { storeId: 'store-3', quantity: 92, minThreshold: 25, lastUpdated: '2026-09-12T18:00:00Z' },
-      'store-4': { storeId: 'store-4', quantity: 650, minThreshold: 150, lastUpdated: '2026-09-13T08:00:00Z' },
-    },
-    dateEffective: '13/09/2026',
+    stocks: createBranchStocks(280, 50, {
+      'store-cpm': { quantity: 24, minThreshold: 30 }, // Low stock in Cipamart!
+    }),
+    dateEffective: '20/09/2026',
     supplier: 'PT Indofood CBP Sukses Makmur',
     locationBin: 'A-04-01',
   },
@@ -142,13 +196,10 @@ export const INITIAL_PRODUCTS: Product[] = [
       bulkQuantity: 12,
       bulkPrice: 252000,
     },
-    stocks: {
-      'store-1': { storeId: 'store-1', quantity: 48, minThreshold: 20, lastUpdated: '2026-09-13T07:00:00Z' },
-      'store-2': { storeId: 'store-2', quantity: 8, minThreshold: 15, lastUpdated: '2026-09-13T05:00:00Z' }, // Low stock!
-      'store-3': { storeId: 'store-3', quantity: 24, minThreshold: 15, lastUpdated: '2026-09-12T14:00:00Z' },
-      'store-4': { storeId: 'store-4', quantity: 180, minThreshold: 50, lastUpdated: '2026-09-13T08:00:00Z' },
-    },
-    dateEffective: '13/09/2026',
+    stocks: createBranchStocks(55, 20, {
+      'store-xml': { quantity: 8, minThreshold: 15 }, // Low stock in Kalimalang!
+    }),
+    dateEffective: '20/09/2026',
     supplier: 'PT Ultrajaya Milk Industry Tbk',
     locationBin: 'C-01-04',
   },
@@ -170,13 +221,10 @@ export const INITIAL_PRODUCTS: Product[] = [
       bulkQuantity: 12,
       bulkPrice: 252000,
     },
-    stocks: {
-      'store-1': { storeId: 'store-1', quantity: 54, minThreshold: 20, lastUpdated: '2026-09-13T07:00:00Z' },
-      'store-2': { storeId: 'store-2', quantity: 22, minThreshold: 15, lastUpdated: '2026-09-13T05:00:00Z' },
-      'store-3': { storeId: 'store-3', quantity: 19, minThreshold: 15, lastUpdated: '2026-09-12T14:00:00Z' },
-      'store-4': { storeId: 'store-4', quantity: 210, minThreshold: 50, lastUpdated: '2026-09-13T08:00:00Z' },
-    },
-    dateEffective: '13/09/2026',
+    stocks: createBranchStocks(60, 20, {
+      'store-snm': { quantity: 10, minThreshold: 15 },
+    }),
+    dateEffective: '20/09/2026',
     supplier: 'PT Ultrajaya Milk Industry Tbk',
     locationBin: 'C-01-05',
   },
@@ -198,13 +246,10 @@ export const INITIAL_PRODUCTS: Product[] = [
       bulkQuantity: 24,
       bulkPrice: 78000,
     },
-    stocks: {
-      'store-1': { storeId: 'store-1', quantity: 180, minThreshold: 40, lastUpdated: '2026-09-13T07:20:00Z' },
-      'store-2': { storeId: 'store-2', quantity: 96, minThreshold: 30, lastUpdated: '2026-09-13T06:10:00Z' },
-      'store-3': { storeId: 'store-3', quantity: 5, minThreshold: 20, lastUpdated: '2026-09-13T07:50:00Z' }, // Low stock!
-      'store-4': { storeId: 'store-4', quantity: 520, minThreshold: 100, lastUpdated: '2026-09-13T08:00:00Z' },
-    },
-    dateEffective: '13/09/2026',
+    stocks: createBranchStocks(190, 40, {
+      'store-klp': { quantity: 15, minThreshold: 30 },
+    }),
+    dateEffective: '20/09/2026',
     supplier: 'PT Tirta Investama Danone',
     locationBin: 'B-02-01',
   },
@@ -226,13 +271,10 @@ export const INITIAL_PRODUCTS: Product[] = [
       bulkQuantity: 30,
       bulkPrice: 320000,
     },
-    stocks: {
-      'store-1': { storeId: 'store-1', quantity: 72, minThreshold: 20, lastUpdated: '2026-09-13T07:10:00Z' },
-      'store-2': { storeId: 'store-2', quantity: 38, minThreshold: 15, lastUpdated: '2026-09-13T06:00:00Z' },
-      'store-3': { storeId: 'store-3', quantity: 31, minThreshold: 15, lastUpdated: '2026-09-12T17:00:00Z' },
-      'store-4': { storeId: 'store-4', quantity: 240, minThreshold: 60, lastUpdated: '2026-09-13T08:00:00Z' },
-    },
-    dateEffective: '13/09/2026',
+    stocks: createBranchStocks(75, 20, {
+      'store-mkr': { quantity: 7, minThreshold: 15 },
+    }),
+    dateEffective: '20/09/2026',
     supplier: 'PT Indofood Fritolay Makmur',
     locationBin: 'D-03-02',
   },
@@ -259,15 +301,12 @@ export const INITIAL_PRODUCTS: Product[] = [
       originalPrice: 34500,
       discountPercent: 16,
       promoLabel: 'PROMO HEMAT',
-      validUntil: '20/09/2026',
+      validUntil: '25/09/2026',
     },
-    stocks: {
-      'store-1': { storeId: 'store-1', quantity: 45, minThreshold: 15, lastUpdated: '2026-09-13T07:05:00Z' },
-      'store-2': { storeId: 'store-2', quantity: 24, minThreshold: 12, lastUpdated: '2026-09-13T06:15:00Z' },
-      'store-3': { storeId: 'store-3', quantity: 18, minThreshold: 10, lastUpdated: '2026-09-12T16:30:00Z' },
-      'store-4': { storeId: 'store-4', quantity: 160, minThreshold: 40, lastUpdated: '2026-09-13T08:00:00Z' },
-    },
-    dateEffective: '13/09/2026',
+    stocks: createBranchStocks(50, 15, {
+      'store-iqm': { quantity: 5, minThreshold: 10 },
+    }),
+    dateEffective: '20/09/2026',
     supplier: 'PT Unilever Indonesia Tbk',
     locationBin: 'E-01-03',
   },
@@ -362,20 +401,20 @@ export const INITIAL_USERS: User[] = [
     name: 'Alex Tanuwijaya',
     email: 'alex.admin@amanstore.com',
     role: 'ADMIN',
-    storeId: 'store-1',
+    storeId: 'store-krg',
   },
   {
     id: 'usr-manager',
     name: 'Dewi Lestari',
     email: 'dewi.manager@amanstore.com',
     role: 'MANAGER',
-    storeId: 'store-2',
+    storeId: 'store-xml',
   },
   {
     id: 'usr-staff',
     name: 'Budi Santoso',
     email: 'budi.floor@amanstore.com',
     role: 'STAFF',
-    storeId: 'store-1',
+    storeId: 'store-krg',
   },
 ];

@@ -35,6 +35,21 @@ export interface ProductStock {
   lastUpdated: string;
 }
 
+export interface ImportProductRecord {
+  name: string;
+  barcode: string;
+  price: number;
+  sku?: string;
+  category?: string;
+  brand?: string;
+  unitLabel?: string;
+  bulkPrice?: number;
+  bulkQuantity?: number;
+  bulkLabel?: string;
+  stock?: number;
+  minThreshold?: number;
+}
+
 export interface Product {
   id: string;
   sku: string; // e.g. "1001040"

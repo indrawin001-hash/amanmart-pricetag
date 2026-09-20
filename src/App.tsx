@@ -41,6 +41,7 @@ import { AuthModal } from './components/AuthModal';
 import { DeployGuideModal } from './components/DeployGuideModal';
 import { ProductFormModal } from './components/ProductFormModal';
 import { StockAdjustModal } from './components/StockAdjustModal';
+import { ProductImportModal } from './components/ProductImportModal';
 
 export default function App() {
   // Core application states
@@ -77,6 +78,7 @@ export default function App() {
   const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
   const [deployGuideOpen, setDeployGuideOpen] = useState<boolean>(false);
   const [productFormOpen, setProductFormOpen] = useState<boolean>(false);
+  const [productImportOpen, setProductImportOpen] = useState<boolean>(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [stockAdjustOpen, setStockAdjustOpen] = useState<boolean>(false);
   const [adjustingProduct, setAdjustingProduct] = useState<Product | null>(null);
@@ -353,7 +355,7 @@ export default function App() {
             }`}
           >
             <Building2 className="w-4 h-4" />
-            Multi-Store Real-Time Cloud Sync (4 Branches)
+            Multi-Store Real-Time Cloud Sync ({stores.length} Branches)
           </button>
 
           <button
@@ -390,6 +392,7 @@ export default function App() {
               setProductFormOpen(true);
             }}
             onDeleteProduct={(id) => storageService.deleteProduct(id)}
+            onOpenImport={() => setProductImportOpen(true)}
             userRole={currentUser.role}
             templates={templates}
           />
@@ -551,6 +554,17 @@ export default function App() {
         onConfirmAdjust={(prodId, stId, newQty, reason) => {
           storageService.adjustStock(prodId, stId, newQty, reason, currentUser.name);
           audioService.playPrintCompleteChime();
+        }}
+      />
+
+      <ProductImportModal
+        isOpen={productImportOpen}
+        onClose={() => setProductImportOpen(false)}
+        stores={stores}
+        activeStoreId={activeStore.id}
+        existingProducts={products}
+        onImportComplete={(imported, targetStoreId, updateExisting) => {
+          storageService.importProducts(imported, targetStoreId, updateExisting);
         }}
       />
     </div>
